@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		#forms{
+			margin-top:60px;
+		}
+		#forms input{
+			display:block;
+		}
+	</style>
+	<script type="text/javascript" src="__STATIC__/scripts/jquery-3.2.1.js"></script>
+</head>
+<body>
+	<div id="test1">
+		<form>
+			<button type="button" id="list">list</button>
+			<button type="button" id="insert">insert</button>
+			<button type="button" id="update">update</button>
+			<button type="button" id="edit">edit</button>
+			<button type="button" id="login">login</button>
+		</form>
+	</div>
+
+	<div id="test2">
+		<form id="forms">
+			<input type="text" name="username">
+			<input type="file" name="avatar_id" id='avatar_id'>
+			<!-- <input type="text" name='user_gender'> -->
+			<button type="button" id="submit">submit</button>
+		</form>
+	</div>
+</body>
+<script type="text/javascript">
+
+function ajax(url,method='GET',data=null){ 
+
+	var request = new XMLHttpRequest();
+	request.open(method, url);
+
+	//发送查询请求并处理
+	switch(method.toLowerCase()){
+		case 'get':
+			data = null;
+			break;
+		case 'post':
+			
+			request.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+			break;
+	}
+
+	request.send(data);
+	
+	request.onreadystatechange = function() {
+		 //获取服务器上readyState的改变，当readyState变为4是请求已结束
+		if (request.readyState===4) {
+			if (request.status===200) { 
+			    //status为200说明请求已成功
+				// document.getElementById("searchResult").innerHTML = request.responseText;//获取响应的结果
+				console.log(request.responseText);
+			} else {
+				alert("发生错误：" + request.status);//把状态码标出
+			}
+		} 
+	}
+}
+
+
+document.getElementById("list").addEventListener('click',function(){
+	var url = "http://localhost/framework/gitTest/hy-admin2.0/public/index.php/user/user/ajax?q=list"
+	ajax(url,'GET');
+},false);
+
+
+
+document.getElementById("insert").addEventListener('click',function(){
+	var url = "http://localhost/framework/gitTest/hy-admin2.0/public/index.php/user/user/ajax?q=insert"
+
+	var data = [];
+	var dataList = [];
+	var str = '';
+	// data['pk'] = 4;
+	data['username'] = 'hjk';
+	data['user_gender'] = 1;
+	// data['create_time'] = 1243534532;
+
+
+	for(i in data){
+		dataList.push(i+'='+data[i]);
+	}
+	str = dataList.join("&");
+	ajax(url,'POST',str);
+},false);
+
+document.getElementById("update").addEventListener('click',function(){
+	var data = [];
+	data['username'] = 'hjk2';
+	data['user_gender'] = 7;
+	var dataList = [];
+	for(i in data){
+		dataList.push(i+'='+data[i]);
+	}
+	str = dataList.join("&");
+
+	// $data['pk'] = 1
+	var url = "http://localhost/framework/gitTest/hy-admin2.0/public/index.php/user/user/ajax?q=update"
+	ajax(url,'POST',str);
+},false);
+
+document.getElementById("edit").addEventListener('click',function(){
+	var data = [];
+	var dataList = [];
+	var str = '';
+	data['pk'] = 4;
+	data['name'] = 'hjk';
+	data['create_time'] = 1243534532;
+
+	for(i in data){
+		dataList.push(i+'='+data[i]);
+	}
+	str = dataList.join("&");
+	
+	var url = "http://localhost/framework/gitTest/hy-admin2.0/public/index.php/user/user/ajax?q=edit"
+	ajax(url,'POST',str);
+},false);
+
+
+document.getElementById("login").addEventListener('click',function(){
+	var data = [];
+	var dataList = [];
+	var str = '';
+	
+	data['username'] = 'hjk2';
+	data['password'] = 123123;
+
+	for(i in data){
+		dataList.push(i+'='+data[i]);
+	}
+	str = dataList.join("&");
+	
+	var url = "http://localhost/framework/gitTest/hy-admin2.0/backend/public/index.php/login"
+	ajax(url,'POST',str);
+},false);
+
+/*document.getElementById('submit').addEventListener('click',function(){
+	var form =  document.getElementById('forms');
+	var formData = new FormData(form);
+	// console.log(document.getElementById('avatar_id').files[0]);
+	formData.append('avatar_id',document.getElementById('avatar_id').files[0]);
+	// console.log(formData);
+	var url = "http://localhost/framework/gitTest/hy-admin2.0/public/index.php/user/user/ajax?q=insert"
+	ajax(url,'POST',formData);
+},false);*/
+
+function upload(){
+	var url = "http://localhost/framework/gitTest/hy-admin2.0/public/index.php/user/user/ajax?q=insert"
+	var form = document.getElementById("forms");
+	var formdata = new FormData(form);
+	formdata.append('avatar_id',document.getElementById('avatar_id').files[0]);
+	$.ajax({
+		type:'POST',
+		url:url,
+		data:formdata,
+		processData:false,
+		contentType:false,
+		dataType:"json",
+		success:function(data){
+			console.log(data)
+		},
+		error:function(jqXHR){
+			console.log('出错了！');
+		}
+	})
+}
+
+$("#submit").on('click',function(){
+	upload();
+})
+
+</script>
+</html>
